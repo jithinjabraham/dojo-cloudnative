@@ -1,0 +1,21 @@
+<div className="App">
+<h1>Weather</h1>
+<h4>Enter your city below.</h4>
+<form action='/' method="post">
+  <input type="search" id="wsearch" name="location"/>
+  <input type="submit" value="Submit"/>
+</form>
+<%if( Weather !== null){ %>
+  <div class="grid">
+    <p>
+      You can expect <%= Description %>. It is currently <%= Temp %> out but it feels like <%= FeelsLike %>.
+      Today has a high of <%= TempMax %> and a low of <%= TempMin %>. <br> The volume of rain in the past hour is <%= Rain %>
+      and the humidity is <%= Humidity %>.
+    </p>
+    <p class="text-muted small">
+      <%= City %>, <%= State %>, <%= Country %>
+    </p>
+  </div>
+<% } %>
+
+</div>
