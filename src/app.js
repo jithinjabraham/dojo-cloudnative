@@ -18,6 +18,7 @@ app.get('/', function(req,res, next) {
 
     res.render("index", {
         Weather: null,
+        Population: null,
     });
 })
 
@@ -74,5 +75,40 @@ app.post('/', async function(req,res, next){
     
 })
 
+app.post('/population', async function(req, res, next) {
+    
+    const populationApi = 'http://statistics:4000/population';
 
+    // Axios HTTP request config
+    const config = {
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+    }
+
+    // Retreive search location from request
+    const searchLocation = req.body.location;
+    if (!searchLocation) {
+        res.status(400).send('Invalid Query');
+        return;
+    }
+    // Composing POST body
+    const data = new URLSearchParams({
+        location: searchLocation
+    })
+
+    axios.post(populationApi, data, config)
+      .then(function (response) {
+        let population = response.data.population;
+
+        res.status(200).send({
+            City: searchLocation,
+            Population: population
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.sendStatus(400);
+      });
+})
 module.exports = app;

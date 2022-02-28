@@ -13,7 +13,7 @@ describe('GET /', () => {
 })
 
 describe('POST /', () => {
-    it('POST route return weather info of city requestd', async () => {
+    it('POST route return weather info of city requested', async () => {
         const response = await request.post('/')
         .send('location=melbourne');
         

@@ -9,3 +9,19 @@ services:
     ports:
       - "3000:3000"
     env_file: ./src/.env 
+    # networks:
+    #   - weather-app
+  statistics:
+    build:
+      context: ./services/statistics
+      dockerfile: Dockerfile
+    volumes:
+      - "./services/statistics:/src/"
+    ports:
+      - "4000:4000"
+    env_file: ./services/statistics/.env
+    # networks:
+    #   - statistics
+# networks:
+#   weather-app:
+#   statistics:

@@ -1,0 +1,37 @@
+
+
+<div class="d-flex align-items-center">
+    <button type="button" class="btn btn-dark p-2" onclick="requestStats()">Show Population</button>
+
+    <p class="p-2 mb-2 font-weight-bold" id="city-population"></p>
+</div>
+
+<br>
+
+
+<script>
+    // Function to Request City population
+    function requestStats() {
+        console.log('in request stats')
+        let city = document.getElementById('requested-city').innerHTML;
+        let population = document.getElementById('city-population').innerHTML;
+        fetch('http://localhost:3000/population', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                location: city
+            })
+        })
+        .then((response)=> {
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data.Population);
+            document.getElementById('city-population').innerHTML = 'The Population is ' + data.Population + '.';
+            
+        })
+        
+    }
+  </script>
