@@ -3,11 +3,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
+const logger = require('./logger')
+const publishToQueue = require('./send').publishToQueue;
+var morgan = require('morgan')
 require('dotenv').config();
 
 const app = express();
 const apiKey = process.env.API_KEY;
 
+app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -28,11 +32,17 @@ app.post('/', async function(req,res, next){
     const searchLocation = req.body.location;
     if (!searchLocation) {
         res.status(400).send('Invalid Query');
+        logger.warn('Invalid Search Location Query')
         return;
     }
+
+    const queueName = 'location';
+    const message = {
+        city: searchLocation
+    };
+    await publishToQueue(queueName, message);
     // compose URL for geolocation data api call
     let geocodingURL = `http://api.openweathermap.org/geo/1.0/direct?q=${searchLocation}&limit=1&units=metric&appid=${apiKey}`;
-
 
     try {
         const response = await axios.get(geocodingURL);     
@@ -69,8 +79,9 @@ app.post('/', async function(req,res, next){
         });
 
     } catch (error) {
-        console.log(error.response);
-        res.status(500).send('Something went wrong')
+        console.log(error)
+        // logger.error(error);
+        res.status(500).send('Something went wrong');
     }
     
 })
@@ -85,11 +96,11 @@ app.post('/population', async function(req, res, next) {
             'content-type': 'application/x-www-form-urlencoded'
         }
     }
-
     // Retreive search location from request
     const searchLocation = req.body.location;
     if (!searchLocation) {
         res.status(400).send('Invalid Query');
+        logger.warn('Invalid Search Location Query')
         return;
     }
     // Composing POST body
@@ -107,7 +118,7 @@ app.post('/population', async function(req, res, next) {
         })
       })
       .catch(function (error) {
-        console.log(error);
+        logger.error(error);
         res.sendStatus(400);
       });
 })

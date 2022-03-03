@@ -20,8 +20,6 @@ services:
     ports:
       - "4000:4000"
     env_file: ./services/statistics/.env
-    # networks:
-    #   - statistics
-# networks:
-#   weather-app:
-#   statistics:
+  # prometheus:
+  #   image: prom/prometheus
+
