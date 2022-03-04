@@ -21,7 +21,6 @@ function randomIntFromInterval(min, max) { // min and max included
 
 // Route which handles the API call and renders the ejs file with weather data
 app.post('/population', function(req,res, next){
-    console.log(locations)
     // Retreive search location from request
     const searchLocation = req.body.location;
     if (!searchLocation) {
@@ -38,10 +37,11 @@ app.post('/population', function(req,res, next){
     })
 })
 
-app.get('/messages', function(req, res, next){
+// Retrieve list of searched cities from rabbitmq store
+app.get('/queries', function(req, res, next){
 
     res.send({
-        messages: locations
+        queries: locations
     })
 })
 

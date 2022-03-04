@@ -1,5 +1,11 @@
 version: "3.9"
 services:
+  rabbit:
+    image: "rabbitmq:3.9-management-alpine"
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   weather-app:
     build:
       context: .
@@ -8,9 +14,7 @@ services:
       - "./src:/src/"
     ports:
       - "3000:3000"
-    env_file: ./src/.env 
-    # networks:
-    #   - weather-app
+    env_file: ./src/.env
   statistics:
     build:
       context: ./services/statistics
@@ -20,6 +24,3 @@ services:
     ports:
       - "4000:4000"
     env_file: ./services/statistics/.env
-  # prometheus:
-  #   image: prom/prometheus
-

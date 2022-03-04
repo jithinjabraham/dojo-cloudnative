@@ -1,0 +1,32 @@
+<div class="align-items-center">
+    <button type="button" class="btn btn-dark p-2" onclick="requestCities()">Show City Queries</button>
+
+    <p class="p-2 mb-2 font-weight-bold" id="city-queries"></p>
+    <div id="queriesContainer"></div>
+</div>
+
+<br>
+
+
+<script>
+    // Function to Request City population
+    function requestCities() {
+        console.log('in request cities function')
+        fetch('http://localhost:4000/queries')
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data.queries)
+                queries = data.queries;
+                let str = '<ul>';
+                queries.forEach(function (query) {
+                    str += '<li>' + query + '</li>';
+                });
+
+                str += '</ul>';
+                document.getElementById("queriesContainer").innerHTML = str;
+            })
+
+    }
+</script>

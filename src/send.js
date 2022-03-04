@@ -1,7 +1,7 @@
 var amqp = require('amqplib/callback_api');
 const logger = require('./logger')
 
-const CONN_URL = "amqp://localhost:5672";
+const CONN_URL = "amqp://localhost";
 let ch = null;
 
 amqp.connect(CONN_URL, function (err, conn) {
