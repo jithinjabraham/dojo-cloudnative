@@ -1,21 +1,37 @@
 var amqp = require('amqplib/callback_api');
 const logger = require('./logger')
 
-const CONN_URL = "amqp://localhost";
+const CONN_URL = "amqp://rabbit";
 let ch = null;
 
-amqp.connect(CONN_URL, function (err, conn) {
-    if (err) {
-        logger.error(err);
-    }
-    conn.createChannel(function (err, channel) {
+
+function start() {
+    amqp.connect(CONN_URL, function (err, conn) {
         if (err) {
-            logger.error(err);
+            console.error("[AMQP]", err.message);
+            return setTimeout(start, 1000);
         }
-        ch = channel;
-        logger.info(`RabbitMQ channel created`)
+        conn.on("error", function (err) {
+            if (err.message !== "Connection closing") {
+                console.error("[AMQP] conn error", err.message);
+            }
+        });
+        conn.on("close", function () {
+            console.error("[AMQP] reconnecting");
+            return setTimeout(start, 1000);
+        });
+
+        console.log("[AMQP] connected");
+
+        conn.createChannel(function (err, channel) {
+            if (err) {
+                logger.error(err);
+            }
+            ch = channel;
+            logger.info(`RabbitMQ channel created`)
+        });
     });
-});
+}
 
 const publishToQueue = async (queueName, data) => {
     let msgBuffer = Buffer.from(JSON.stringify(data));
@@ -32,5 +48,7 @@ process.on('exit', (code) => {
     ch.close();
     logger.info(`Closing rabbitmq channel`)
 });
+
+start();
 
 module.exports = { publishToQueue };

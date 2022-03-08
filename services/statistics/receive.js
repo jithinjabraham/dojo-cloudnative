@@ -1,10 +1,34 @@
 var amqp = require('amqplib/callback_api');
 
+const CONN_URL = 'amqp://rabbit';
 const locations = [];
-amqp.connect('amqp://localhost', function (error0, connection) {
-    if (error0) {
-        throw error0;
-    }
+var connection = null;
+
+
+function start() {
+    amqp.connect(CONN_URL, function (err, conn) {
+        if (err) {
+            console.error("[AMQP]", err.message);
+            return setTimeout(start, 1000);
+        }
+        conn.on("error", function (err) {
+            if (err.message !== "Connection closing") {
+                console.error("[AMQP] conn error", err.message);
+            }
+        });
+        conn.on("close", function () {
+            console.error("[AMQP] reconnecting");
+            return setTimeout(start, 1000);
+        });
+
+        console.log("[AMQP] connected");
+        connection = conn;
+
+        listen();
+    });
+}
+
+function listen() {
     connection.createChannel(function (error1, channel) {
         if (error1) {
             throw error1;
@@ -30,6 +54,8 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             noAck: false
         });
     });
-});
+}
+
+start();
 
 module.exports = { locations };

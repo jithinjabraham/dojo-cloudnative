@@ -93,7 +93,7 @@ app.post('/', async function (req, res, next) {
 
 app.post('/population', async function (req, res, next) {
 
-    const populationApi = 'http://localhost:4000/population';
+    const populationApi = 'http://statistics:4000/population';
     // Axios HTTP request config
     const config = {
         headers: {
