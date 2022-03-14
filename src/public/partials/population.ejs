@@ -13,7 +13,7 @@
         console.log('in request stats')
         let city = document.getElementById('requested-city').innerHTML;
         let population = document.getElementById('city-population').innerHTML;
-        fetch('http://localhost:3000/population', {
+        fetch('http://localhost:8000/population', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -22,14 +22,14 @@
                 location: city
             })
         })
-        .then((response)=> {
-            return response.json();
-        })
-        .then((data) => {
-            console.log(data.Population);
-            document.getElementById('city-population').innerHTML = 'The Population is ' + data.Population + '.';
-            
-        })
-        
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data.Population);
+                document.getElementById('city-population').innerHTML = 'The Population is ' + data.Population + '.';
+
+            })
+
     }
-  </script>
+</script>
