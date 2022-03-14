@@ -1,5 +1,36 @@
 version: "3.9"
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
 services:
+  rabbit:
+    image: "rabbitmq:3.9-management-alpine"
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./services/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - 9090:9090
+    expose:
+      - "9090"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./services/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    ports:
+      - 3000:3000
   weather-app:
     build:
       context: .
@@ -7,10 +38,10 @@ services:
     volumes:
       - "./src:/src/"
     ports:
-      - "3000:3000"
-    env_file: ./src/.env 
-    # networks:
-    #   - weather-app
+      - 8000:8000
+    expose:
+      - "8000"
+    env_file: ./src/.env
   statistics:
     build:
       context: ./services/statistics
@@ -18,10 +49,7 @@ services:
     volumes:
       - "./services/statistics:/src/"
     ports:
-      - "4000:4000"
+      - 4000:4000
+    expose:
+      - "4000"
     env_file: ./services/statistics/.env
-    # networks:
-    #   - statistics
-# networks:
-#   weather-app:
-#   statistics:

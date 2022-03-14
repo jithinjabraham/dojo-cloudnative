@@ -110,3 +110,5 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+.docker*
+.DS_Store

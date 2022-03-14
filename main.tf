@@ -18,3 +18,7 @@ provider "aws" {
 resource "aws_ecr_repository" "ecr-repo-1" {
   name = "ecr-repo-1" 
 }
+
+resource "aws_ecs_cluster" "demo-cluster" {
+  name = "demo-cluster" # Naming the cluster
+}
